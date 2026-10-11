@@ -9,6 +9,7 @@
 
 import { motion, type Variants } from "framer-motion";
 import { HomeTop, CategoryBar, FeedArticleList, Sidebar } from "@/components/home";
+import { EssayBar } from "@/components/home/HomeTop/EssayBar"; // [custom]
 
 // 动画变体
 const containerVariants: Variants = {
@@ -37,6 +38,11 @@ const itemVariants: Variants = {
 export function HomePageContent() {
   return (
     <motion.div className="home-page-content" initial={false} animate="visible" variants={containerVariants}>
+      {/* [custom] 即刻短文滚动条 */}
+      <motion.div className="pt-4 empty:hidden" variants={itemVariants}>
+        <EssayBar />
+      </motion.div>
+
       {/* 首页顶部区域 */}
       <motion.div className="post-home-top-container" variants={itemVariants}>
         <HomeTop />
