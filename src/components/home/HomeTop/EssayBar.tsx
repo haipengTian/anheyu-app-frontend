@@ -33,7 +33,8 @@ export function EssayBar() {
   return (
     <div className={styles.essayBarContainer}>
       <Link href="/essay" className={styles.essayLogo} aria-label="即刻短文">
-        <Icon icon="ri:quill-pen-line" className={styles.essayLogoIcon} />
+        {/* 不套用 .essayLogoIcon：它的 stroke-width: 20 是给大画布图标准备的，会把 24 单位的 Remix 图标涂成实心方块 */}
+        <Icon icon="ri:quill-pen-line" />
       </Link>
       <div className={styles.essayCarouselWrapper}>
         <Link href="/essay" className={styles.essayCarouselLink}>
