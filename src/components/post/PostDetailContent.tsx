@@ -31,6 +31,7 @@ import { usePageStore } from "@/store/page-store";
 import { setArticleMetaThemeColor, restoreMetaThemeColor } from "@/utils/theme-manager";
 import { applySiteAppearanceFromConfig } from "@/utils/site-theme-colors";
 import { resolvePostDefaultCoverUrl } from "@/utils/same-origin-media-url";
+import { buildPostFooterText } from "@/lib/post-footer"; // [custom]
 import type { Article, RecentArticle } from "@/types/article";
 import styles from "./PostDetail.module.css";
 
@@ -123,8 +124,7 @@ export function PostDetailContent({ article, recentArticles = [] }: PostDetailCo
     };
   }, [article.primary_color]);
 
-  const siteName = appName || "安知鱼";
-  const ownerName = siteOwnerName || "安知鱼";
+  const { siteName, description: footerDescription } = buildPostFooterText(appName, siteOwnerName); // [custom] 去掉写死的「安知鱼」兜底
   const defaultCover = useMemo(() => resolvePostDefaultCoverUrl(postDefaultCover), [postDefaultCover]);
   const customJS = article.extra_config?.custom_js;
   const hasCustomJS = !!customJS && customJS.trim() !== "";
@@ -222,7 +222,8 @@ export function PostDetailContent({ article, recentArticles = [] }: PostDetailCo
       {/* 底部栏 */}
       <div className={styles.footerBar}>
         <div className={styles.footerLogo}>{siteName}</div>
-        <div className={styles.footerDescription}>来自 {ownerName} 最新设计与科技的文章</div>
+        {/* [custom] 文案由 buildPostFooterText 生成 */}
+        <div className={styles.footerDescription}>{footerDescription}</div>
         <Link href="/archives" className={styles.footerLink}>
           查看全部
         </Link>
