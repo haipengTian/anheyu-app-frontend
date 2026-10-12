@@ -85,6 +85,14 @@ export const adminMenuConfig: AdminMenuGroup[] = [
         icon: "ri:image-line",
         roles: ["admin"],
       },
+      // [custom] 即刻短文
+      {
+        id: "essays",
+        label: "即刻短文",
+        href: "/admin/essays",
+        icon: "ri:quill-pen-line",
+        roles: ["admin"],
+      },
     ],
   },
   {

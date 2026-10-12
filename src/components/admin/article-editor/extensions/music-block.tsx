@@ -47,7 +47,8 @@ async function fetchMusicAudioUrl(neteaseId: string): Promise<string | null> {
  * 通过第三方 API 获取网易云音乐歌曲详情
  * 返回歌名、歌手、封面图等信息
  */
-async function fetchMusicDetail(neteaseId: string): Promise<{ name: string; artist: string; pic: string } | null> {
+// [custom] 导出供即刻短文后台复用
+export async function fetchMusicDetail(neteaseId: string): Promise<{ name: string; artist: string; pic: string } | null> {
   if (!neteaseId || !/^\d+$/.test(neteaseId)) return null;
 
   try {
