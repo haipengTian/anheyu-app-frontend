@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { PostDetailContent } from "@/components/post";
 import { buildArticleSeoKeywords } from "@/lib/article-seo-keywords";
 import { buildArticleJsonLd, buildPageMetadata, fetchSiteConfigForSeo, resolveSeoSiteInfo } from "@/lib/seo";
+import { resolveArticleAuthor } from "@/lib/seo-author"; // [custom]
 
 /**
  * 文章详情页面的 viewport 配置
@@ -107,6 +108,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   const articlePath = `/posts/${encodeURIComponent(String(article.abbrlink || id))}`;
+  const siteConfig = await fetchSiteConfigForSeo(); // [custom]
   return buildPageMetadata({
     title: article.title,
     absoluteTitle: true,
@@ -117,7 +119,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     image: article.cover_url,
     publishedTime: article.created_at,
     modifiedTime: article.updated_at,
-    authors: [article.copyright_author || "安知鱼"],
+    authors: [resolveArticleAuthor(article.copyright_author, siteConfig)].filter(Boolean), // [custom]
+    siteConfig, // [custom]
   });
 }
 

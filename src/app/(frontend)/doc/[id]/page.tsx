@@ -6,7 +6,8 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { DocDetailContent } from "@/components/doc/DocDetailContent";
 import { buildArticleSeoKeywords } from "@/lib/article-seo-keywords";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildPageMetadata, fetchSiteConfigForSeo } from "@/lib/seo"; // [custom] 加 fetchSiteConfigForSeo
+import { resolveArticleAuthor } from "@/lib/seo-author"; // [custom]
 
 export const viewport: Viewport = {
   themeColor: [
@@ -71,6 +72,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const seriesName = article.doc_series_id ? await getDocSeriesName(String(article.doc_series_id)) : null;
   const pageTitle = seriesName ? `${article.title} - ${seriesName}` : article.title;
 
+  const siteConfig = await fetchSiteConfigForSeo(); // [custom]
   return buildPageMetadata({
     title: pageTitle,
     absoluteTitle: true,
@@ -81,7 +83,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     image: article.cover_url,
     publishedTime: article.created_at,
     modifiedTime: article.updated_at,
-    authors: [article.copyright_author || "安知鱼"],
+    authors: [resolveArticleAuthor(article.copyright_author, siteConfig)].filter(Boolean), // [custom]
+    siteConfig, // [custom]
   });
 }
 
