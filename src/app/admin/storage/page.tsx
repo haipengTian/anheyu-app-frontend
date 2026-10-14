@@ -42,6 +42,7 @@ import { useStoragePage } from "./_hooks/use-storage-page";
 import {
   POLICY_FLAG_LABELS,
   STORAGE_TYPE_LABELS,
+  isStoragePolicyConfigured,
   type StoragePolicy,
   type StoragePolicyType,
 } from "@/types/storage-policy";
@@ -52,6 +53,7 @@ import { AliyunOssForm } from "@/components/admin/storage/AliyunOssForm";
 import { AwsS3Form } from "@/components/admin/storage/AwsS3Form";
 import { QiniuKodoForm } from "@/components/admin/storage/QiniuKodoForm";
 import { UpyunForm } from "@/components/admin/storage/UpyunForm";
+import { ImgBedForm } from "@/components/admin/storage/ImgBedForm";
 
 // ===================================
 // 存储类型图标 & 配色
@@ -65,6 +67,7 @@ const TYPE_ICONS: Record<StoragePolicyType, typeof Server> = {
   aws_s3: Server,
   qiniu_kodo: Warehouse,
   upyun: Cloud,
+  imgbed: CloudUpload,
 };
 
 const TYPE_ICON_COLORS: Record<StoragePolicyType, string> = {
@@ -75,6 +78,7 @@ const TYPE_ICON_COLORS: Record<StoragePolicyType, string> = {
   aws_s3: "text-amber-600 bg-amber-500/10",
   qiniu_kodo: "text-cyan-600 bg-cyan-500/10",
   upyun: "text-violet-500 bg-violet-500/10",
+  imgbed: "text-rose-500 bg-rose-500/10",
 };
 
 // ===================================
@@ -93,11 +97,7 @@ function PolicyCard({
   const Icon = TYPE_ICONS[policy.type] ?? Database;
   const iconColor = TYPE_ICON_COLORS[policy.type] ?? "text-foreground/60 bg-foreground/5";
   const isCloud = policy.type !== "local";
-  const isConfigured = isCloud
-    ? policy.type === "onedrive"
-      ? !!policy.access_key
-      : !!(policy.access_key && policy.secret_key)
-    : true;
+  const isConfigured = isStoragePolicyConfigured(policy);
   const canDelete = !policy.flag && !(policy.type === "local" && policy.virtual_path === "/");
 
   return (
@@ -320,6 +320,11 @@ const CREATE_DEFAULTS: Record<StoragePolicyType, Partial<StoragePolicy>> = {
     max_size: 10485760,
     settings: { upload_method: "server" },
   },
+  imgbed: {
+    type: "imgbed", name: "", virtual_path: "/imgbed",
+    server: "https://img.thpvip.xyz", base_path: "blog/articles", is_private: false,
+    max_size: 10485760, settings: { upload_method: "server", upload_channel: "s3" },
+  },
 };
 
 /** 动态表单映射 */
@@ -331,6 +336,7 @@ const CREATE_FORM_MAP: Record<StoragePolicyType, typeof LocalForm> = {
   aws_s3: AwsS3Form,
   qiniu_kodo: QiniuKodoForm,
   upyun: UpyunForm,
+  imgbed: ImgBedForm,
 };
 
 /** 表单主体（通过 key 强制重新挂载，确保 useState 初始化器每次打开都执行） */
@@ -496,11 +502,7 @@ export default function StoragePage() {
   }
 
   // 统计数据
-  const configuredCount = sp.allPolicies.filter(p => {
-    if (p.type === "local") return true;
-    if (p.type === "onedrive") return !!p.access_key;
-    return !!(p.access_key && p.secret_key);
-  }).length;
+  const configuredCount = sp.allPolicies.filter(isStoragePolicyConfigured).length;
   const flaggedCount = sp.allPolicies.filter(p => !!p.flag).length;
   const unconfiguredCount = Math.max(sp.total - configuredCount, 0);
 

@@ -6,7 +6,7 @@
 //          存储类型
 // ===================================
 
-export const STORAGE_TYPES = ["local", "onedrive", "tencent_cos", "aliyun_oss", "aws_s3", "qiniu_kodo", "upyun"] as const;
+export const STORAGE_TYPES = ["local", "onedrive", "tencent_cos", "aliyun_oss", "aws_s3", "qiniu_kodo", "upyun", "imgbed"] as const;
 
 export type StoragePolicyType = (typeof STORAGE_TYPES)[number];
 
@@ -19,6 +19,7 @@ export const STORAGE_TYPE_LABELS: Record<StoragePolicyType, string> = {
   aws_s3: "AWS S3",
   qiniu_kodo: "七牛云存储",
   upyun: "又拍云存储",
+  imgbed: "我们的图床",
 };
 
 /** 策略标志类型 */
@@ -49,6 +50,8 @@ export interface StoragePolicySettings {
   // AWS S3
   force_path_style?: boolean;
   endpoint_url?: string;
+  upload_channel?: "s3" | "cfr2" | "telegram" | "discord" | "huggingface" | "webdav";
+  channel_name?: string;
 }
 
 // ===================================
@@ -82,6 +85,13 @@ export interface StoragePolicy {
 export interface StoragePolicyListParams {
   page?: number;
   pageSize?: number;
+}
+
+export function isStoragePolicyConfigured(policy: Partial<StoragePolicy>): boolean {
+  if (policy.type === "local") return true;
+  if (policy.type === "onedrive") return !!policy.access_key;
+  if (policy.type === "imgbed") return !!policy.secret_key;
+  return !!(policy.access_key && policy.secret_key);
 }
 
 export interface StoragePolicyListResponse {

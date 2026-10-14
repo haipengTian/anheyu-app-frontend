@@ -16,6 +16,7 @@ import { AliyunOssForm } from "@/components/admin/storage/AliyunOssForm";
 import { AwsS3Form } from "@/components/admin/storage/AwsS3Form";
 import { QiniuKodoForm } from "@/components/admin/storage/QiniuKodoForm";
 import { UpyunForm } from "@/components/admin/storage/UpyunForm";
+import { ImgBedForm } from "@/components/admin/storage/ImgBedForm";
 import ImageAutoCompressEditor from "./_components/ImageAutoCompressEditor";
 
 // ===================================
@@ -62,6 +63,7 @@ const STORAGE_TYPE_OPTIONS = [
   { key: "aws_s3", label: "AWS S3" },
   { key: "qiniu_kodo", label: "七牛云存储" },
   { key: "upyun", label: "又拍云存储" },
+  { key: "imgbed", label: "我们的图床" },
 ];
 
 // ===================================
@@ -76,6 +78,7 @@ const PROVIDER_FORMS: Record<StoragePolicyType, typeof LocalForm> = {
   aws_s3: AwsS3Form,
   qiniu_kodo: QiniuKodoForm,
   upyun: UpyunForm,
+  imgbed: ImgBedForm,
 };
 
 // ===================================

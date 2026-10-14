@@ -14,6 +14,7 @@ const TYPE_ICONS: Record<StoragePolicyType, typeof Server> = {
   aws_s3: Server,
   qiniu_kodo: Warehouse,
   upyun: Cloud,
+  imgbed: CloudUpload,
 };
 
 interface StorageTypeSelectorProps {
